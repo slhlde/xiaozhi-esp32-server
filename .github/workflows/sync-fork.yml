@@ -1,0 +1,25 @@
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # 每 6 小时自动同步一次（UTC 时间）
+  workflow_dispatch: # 允许在 GitHub 页面手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Sync upstream
+        run: |
+          git remote add upstream https://github.com/xinnan-tech/xiaozhi-esp32-server.git
+          git fetch upstream
+          git merge upstream/main --no-edit
+          git push
